@@ -1,0 +1,36 @@
+name: "google_signin"
+
+platforms:
+    armv7-android:
+        context:
+            defines: ["ANDROID"]
+            aaptExtraPackages: ["com.google.android.gms"]
+
+    arm64-android:
+        context:
+            defines: ["ANDROID"]
+            aaptExtraPackages: ["com.google.android.gms"]
+
+    armv7-ios:
+        context:
+            defines: ["IOS"]
+            infoPlist:
+                CFBundleURLTypes:
+                    - CFBundleURLSchemes:
+                        - "com.googleusercontent.apps.410308724714-5pk79t8emiom08cdqac2g02fv883djm3"
+
+    arm64-ios:
+        context:
+            defines: ["IOS"]
+            infoPlist:
+                CFBundleURLTypes:
+                    - CFBundleURLSchemes:
+                        - "com.googleusercontent.apps.410308724714-5pk79t8emiom08cdqac2g02fv883djm3"
+
+    x86_64-ios:
+        context:
+            defines: ["IOS"]
+            infoPlist:
+                CFBundleURLTypes:
+                    - CFBundleURLSchemes:
+                        - "com.googleusercontent.apps.410308724714-5pk79t8emiom08cdqac2g02fv883djm3"
