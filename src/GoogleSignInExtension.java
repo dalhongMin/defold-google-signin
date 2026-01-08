@@ -115,9 +115,15 @@ public class GoogleSignInExtension {
             sActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    sGoogleSignInClient.signOut();
-                    sIsSignedIn = false;
-                    Log.d(TAG, "Signed out");
+                    // revokeAccess를 사용하여 완전히 연결 해제
+                    // 이렇게 하면 다음 로그인 시 계정 선택 화면이 다시 표시됨
+                    sGoogleSignInClient.revokeAccess().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(Task<Void> task) {
+                            sIsSignedIn = false;
+                            Log.d(TAG, "Signed out and revoked access");
+                        }
+                    });
                 }
             });
         }
