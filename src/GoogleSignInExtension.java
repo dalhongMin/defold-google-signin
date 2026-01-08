@@ -19,6 +19,7 @@ public class GoogleSignInExtension {
     private static GoogleSignInClient sGoogleSignInClient;
     private static String sClientId;
     private static boolean sIsSignedIn = false;
+    private static boolean sForceInteractive = false;  // 로그아웃 후 interactive 강제
 
     // Native callback - will be called from C++
     public static native void onSignInResult(boolean success, String idToken, String userId, String email, String displayName, String error);
@@ -62,7 +63,15 @@ public class GoogleSignInExtension {
             @Override
             public void run() {
                 try {
-                    Log.d(TAG, "Starting Google Sign-In flow...");
+                    Log.d(TAG, "Starting Google Sign-In flow... forceInteractive=" + sForceInteractive);
+
+                    // 로그아웃 후에는 항상 interactive sign-in 사용
+                    if (sForceInteractive) {
+                        Log.d(TAG, "Force interactive sign-in (after logout)");
+                        sForceInteractive = false;
+                        startInteractiveSignIn();
+                        return;
+                    }
 
                     // First try silent sign-in
                     sGoogleSignInClient.silentSignIn().addOnCompleteListener(sActivity, new OnCompleteListener<GoogleSignInAccount>() {
@@ -115,13 +124,16 @@ public class GoogleSignInExtension {
             sActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    // 다음 로그인 시 interactive sign-in 강제
+                    sForceInteractive = true;
+
                     // revokeAccess를 사용하여 완전히 연결 해제
                     // 이렇게 하면 다음 로그인 시 계정 선택 화면이 다시 표시됨
                     sGoogleSignInClient.revokeAccess().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(Task<Void> task) {
                             sIsSignedIn = false;
-                            Log.d(TAG, "Signed out and revoked access");
+                            Log.d(TAG, "Signed out and revoked access, forceInteractive=" + sForceInteractive);
                         }
                     });
                 }
